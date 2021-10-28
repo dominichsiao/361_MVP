@@ -17,7 +17,7 @@ class MyWindow(QMainWindow):
         self.b1 = QtWidgets.QPushButton(self)
         self.b1.setText("Start Visualization")
         self.b1.move(50,50)
-        self.b1.clicked.connect(self.click)
+        self.b1.clicked.connect(self.browseFile)
         print("initiated")
 
     def rnd_color(self):
@@ -28,13 +28,14 @@ class MyWindow(QMainWindow):
         filename = QFileDialog.getOpenFileName(self, 'Open file', 'C:\\Users\\domin\\OneDrive - Oregon State University\\CS things\\361\\Assignment 5', 'WAV file (*.wav)')
         path = filename[0]
         #print(path)
-        self.click()
+        self.click(path)
+    #tutorial source: https://medium.com/analytics-vidhya/how-to-create-a-music-visualizer-7fad401f5a69
+    def click(self, path):
+        print(path)
+        new_path = path.replace("C:/Users/domin/OneDrive - Oregon State University/CS things/361/Assignment 5/","")
+        print(new_path)
 
-    def click(self):
-        #print(path)
-        #new_path = path.replace("C:/Users/domin/OneDrive - Oregon State University/CS things/361/Assignment/ 5","")
-        #print(new_path)
-        filename = 'japan.wav'
+        filename = new_path
         notes = []
         init_array = []
         init_bars = []
@@ -252,7 +253,7 @@ class AverageNotes(MoreNotes):
         self.rect = Rect(self.x, self.y, self.width, self.height)
         self.rect.rotate(self.angle)
 
-class Rect:
+class Rectangle:
 
     def __init__(self,x ,y, w, h):
         self.x, self.y, self.w, self.h = x,y, w, h
