@@ -1,10 +1,14 @@
-from AudioParser import *
 import random
 import colorsys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PyQt5.uic import loadUi
 import sys
+import math
+import matplotlib.pyplot as plt
+import librosa.display
+import numpy as np
+import pygame
 
 class MyWindow(QMainWindow):
     def __init__(self):
@@ -192,6 +196,8 @@ def clamp(min, max, val):
     return val
 
 
+
+
 class MusicData:
     def __init__(self):
         self.frequencies = 0 
@@ -209,6 +215,8 @@ class MusicData:
 
     def get_decibel(self, target_time, freq):
         return self.spectrogram[int(freq*self.frequencies)][int(target_time*self.time)]
+
+
 
 class Notes:
     def __init__(self, x, y, freq, color, width=50, min_height=10, max_height=100, min_decibel=-80, max_decibel=0):
@@ -251,6 +259,26 @@ class AverageNotes(MoreNotes):
     def update_rect(self):
         self.rect = Rect(self.x, self.y, self.width, self.height)
         self.rect.rotate(self.angle)
+
+
+class Rect:
+    def __init__(self,x ,y, w, h):
+        self.x, self.y, self.w, self.h = x,y, w, h
+        self.points = []
+        self.origin = [self.w/2,0]
+        self.offset = [self.origin[0] + x, self.origin[1] + y]
+        self.rotate(0)
+    def rotate(self, angle):
+        template = [
+            (-self.origin[0], self.origin[1]),
+            (-self.origin[0] + self.w, self.origin[1]),
+            (-self.origin[0] + self.w, self.origin[1] - self.h),
+            (-self.origin[0], self.origin[1] - self.h)
+        ]
+        self.points = [translate(rotate(xy, math.radians(angle)), self.offset) for xy in template]
+    def draw(self,screen):
+        pygame.draw.polygon(screen, (255,255, 0), self.points)
+
 
 def window():
     app = QApplication(sys.argv)
