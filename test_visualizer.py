@@ -18,7 +18,7 @@ class MyWindow(QMainWindow):
         self.b1.setText("Start Visualization")
         self.b1.move(50,50)
         self.b1.clicked.connect(self.browseFile)
-        print("initiated")
+        print("initation test")
 
     def rnd_color(self):
         h, s, l = random.random(), 0.5 + random.random() / 2.0, 0.4 + random.random() / 5.0
@@ -35,7 +35,7 @@ class MyWindow(QMainWindow):
         new_path = path.replace("C:/Users/domin/OneDrive - Oregon State University/CS things/361/Assignment 5/","")
         print(new_path)
 
-        filename = new_path
+        filename = "japan.wav"
         notes = []
         init_array = []
         init_bars = []
@@ -121,11 +121,11 @@ class MyWindow(QMainWindow):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-
+            
             for i in notes:
                 for j in i:
                     j.update_all(change, pygame.mixer.music.get_pos() / 1000.0, data)
-
+            
             for i in notes[0]:
                 bass += i.avg
             bass /= len(notes[0])
@@ -194,17 +194,15 @@ def clamp(min, max, val):
 
 class MusicData:
     def __init__(self):
-        self.frequencies = 0  # array for frequencies
-        self.time = 0  # array of time periods
-        self.spectrogram = None  # a matrix that contains decibel vals according to frequency and time indexes
+        self.frequencies = 0 
+        self.time = 0  
+        self.spectrogram = None  
 
     def load(self, filename):
-        time_series, sample_rate = librosa.load(filename)  # getting information from the file
-        # getting a matrix which contains amplitude vals according to frequency and time indexes
+        time_series, sample_rate = librosa.load(filename)
         stft = np.abs(librosa.stft(time_series, hop_length=512, n_fft=2048*4))
-        self.spectrogram = librosa.amplitude_to_db(stft, ref=np.max)  # converting the matrix to decibel matrix
-        frequencies = librosa.core.fft_frequencies(n_fft=2048*4)  # getting an array of frequencies
-        # getting an array of time periodic
+        self.spectrogram = librosa.amplitude_to_db(stft, ref=np.max) 
+        frequencies = librosa.core.fft_frequencies(n_fft=2048*4)  
         times = librosa.core.frames_to_time(np.arange(self.spectrogram.shape[1]), sr=sample_rate, hop_length=512, n_fft=2048*4)
         self.time = len(times)/times[len(times) - 1]
         self.frequencies = len(frequencies)/frequencies[len(frequencies)-1]
@@ -226,6 +224,7 @@ class Notes:
         speed = (desired_height - self.height)/0.1
         self.height += speed * dt
         self.height = clamp(self.min_height, self.max_height, self.height)
+
 
 class MoreNotes(Notes):
     def __init__(self, x, y, rng, color, width=50, min_height=10, max_height=100, min_decibel=-80, max_decibel=0):
@@ -252,24 +251,6 @@ class AverageNotes(MoreNotes):
     def update_rect(self):
         self.rect = Rect(self.x, self.y, self.width, self.height)
         self.rect.rotate(self.angle)
-
-class Rectangle:
-
-    def __init__(self,x ,y, w, h):
-        self.x, self.y, self.w, self.h = x,y, w, h
-        self.points = []
-        self.origin = [self.w/2,0]
-        self.offset = [self.origin[0] + x, self.origin[1] + y]
-        self.rotate(0)
-
-    def rotate(self, angle):
-        template = [
-            (-self.origin[0], self.origin[1]),
-            (-self.origin[0] + self.w, self.origin[1]),
-            (-self.origin[0] + self.w, self.origin[1] - self.h),
-            (-self.origin[0], self.origin[1] - self.h)
-        ]
-        self.points = [translate(rotate(cord, math.radians(angle)), self.offset) for cord in template]
 
 def window():
     app = QApplication(sys.argv)
